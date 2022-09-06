@@ -7,6 +7,10 @@ app.set("view engine", "ejs");
 app.use("/static", express.static("static"))
 app.use("/uploads", express.static("uploads"))
 const port = 3000;
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 ////////////////////저장할 공간에 대한 세부설정//////////////////////////
 // const upload = multer({
 //     // 저장 공간의 설정을 위한 메소드
@@ -32,8 +36,7 @@ const port = 3000;
 //     limits: { fileSize: 5 * 1024 * 1024 },
 // });
 // ////////////////////////////////////////////////
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+
 
 // /////////////// 주소에 관한 query/////////////
 // app.get("/", (req, res) => {
@@ -60,12 +63,15 @@ app.get("/", (req, res) => {
 
     res.render("aaaa");
 });
-app.post("/axios", (req, res) => {
-    console.log(req.body);
-    var ID = {
-        id:
+app.post("/post/axios", (req, res) => {
+
+    if (req.body.id == "dkseho" || req.body.pw == "dksehlsekrh") {
+        console.log(req.body);
+        res.send("로그인성공");
+    } else {
+        res.send("로그인실패");
+
     }
-    res.send("로그인성공");
 });
 //////////////////////////////////////////////////
 // app.get("/get/axios", (req, res) => {
