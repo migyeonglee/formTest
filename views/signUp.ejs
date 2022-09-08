@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Welcome!!</title>
+    <style>
+        fieldset {
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        input,
+        button {
+            margin-top: 10px;
+        }
+        
+        .SL {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        #red {
+            margin-top: 10px;
+            color: red;
+        }
+        
+        .welcome {
+            margin: 10px;
+            text-align: center;
+        }
+        
+        .d_none {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form id="form_login" class="Login">
+        <fieldset>
+            <legend>login</legend>
+            ID : <input type="text" name="id" id="id" placeholder="아이디"><br> Password : <input type="text" name="pw" id="pw" placeholder="비밀번호"><br>
+            <div id="red"></div>
+            <div class="SL">
+                <button type="button" id="sign_up" onclick="LsignUp()">회원가입</button>
+                <button type="button" id="login" onclick="Login()">로그인</button>
+
+            </div>
+        </fieldset>
+    </form>
+    <form class="d_none" id="form_signUp">
+        <fieldset>
+            <legend>sign_up</legend>
+            ID : <input type="text" name="id" placeholder="아이디를 입력하세요 20"><br> Password : <input type="text" name="pw" placeholder="비밀번호를 입력하세요 20"><br> name : <input type="text" name="name" placeholder="이름을 입력하세요 5"><br>
+            <button type="button" id="join" onclick="signUpJoin()">가입하기</button>
+        </fieldset>
+    </form>
+    <form class="d_none" id="User">
+        <fieldset>
+            <div class="welcome">
+                <%=data.name%>님 환영합니다.</div>
+            <button type="button" id="upDate" onclick="update()">수정/탈퇴</button>
+        </fieldset>
+    </form>
+    <form class="d_none" id="userUpDate">
+        <fieldset>
+            <legend>User_Up_Date</legend>
+            ID : <input type="text" name="id" placeholder="새 아이디"><br> Password : <input type="text" name="pw" placeholder="새 비밀번호"><br>
+            <div class="SL">
+                <button type="button" id="signUp_upDate" onclick="sign_up_update()">수정</button>
+                <button type="button" id="signUp_del" onclick="sign_up_del()">탈퇴</button>
+            </div>
+        </fieldset>
+
+    </form>
+
+
+    <script>
+        // 로그인 창 -> 회원가입 창
+        function LsignUp() {
+            $("#form_signUp").removeClass("d_none");
+            $("#form_login").addClass("d_none");
+            console.log("회원가입을 하십시오")
+        }
+
+
+        // 가입하기 회원가입 창 -> 로그인 창
+        function signUpJoin() {
+            var form = document.getElementById("form_signUp");
+            var data = {
+                id: form.id.value,
+                pw: form.pw.value,
+                name: form.name.value
+            }
+            axios({
+                url: "/signUp/post",
+                method: "post",
+                data: data
+            }).then((response) => {
+                console.log("signUp : ", response)
+            })
+            $("#form_login").removeClass("d_none");
+            $("#form_signUp").addClass("d_none");
+            console.log("<%=data.name%>님, 환영합니다.")
+            Swal.fire(
+                '가입 완료 :)',
+            );
+        }
+
+        // 로그인
+        function Login() {
+            const form = document.querySelector("form");
+            var data = {
+                id: form.id.value,
+                pw: form.pw.value
+            }
+            console.log(data);
+            axios({
+                url: '/signUp/login',
+                method: 'post',
+                data: data
+            }).then((response) => {
+                console.log("login: ", response)
+                $("#red").html(response.data);
+                //         $("#User").removeClass("d_none");
+                // $("#form_login").addClass("d_none");
+            });
+        }
+        // 로그인 창 -> 수정 창
+        function update() {
+            $("#userUpDate").removeClass("d_none");
+            $("#User").addClass("d_none");
+        }
+        // 수정완료
+        function sign_up_update() {
+            Swal.fire(
+                '수정 완료 :)',
+            );
+            $("#userUpDate").addClass("d_none");
+            $("#form_login").removeClass("d_none");
+        }
+        // 탈퇴
+        function sign_up_del(id, obj) {
+
+            Swal.fire(
+                '탈퇴 완료 :(',
+            );
+            $("#userUpDate").addClass("d_none");
+            $("#form_login").removeClass("d_none");
+        }
+    </script>
+
+</body>
+
+</html>
